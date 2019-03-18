@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@material-ui/core": "3.9.2",
-    "formik": "1.5.1",
+    "formik": "2.0.1-alpha.0",
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "react-scripts": "2.0.3",
