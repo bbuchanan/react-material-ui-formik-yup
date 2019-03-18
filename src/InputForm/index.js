@@ -1,7 +1,6 @@
 import React from "react";
-import { Formik } from "formik";
-import { Paper, withStyles } from "@material-ui/core";
-import Form from "./form";
+import { useFormik, FormikProvider } from "formik";
+import { Paper, withStyles, Button, TextField } from "@material-ui/core";
 import * as Yup from "yup";
 
 const styles = theme => ({
@@ -37,19 +36,71 @@ const inputForm = props => {
   const classes = props;
   const values = { name: "", email: "", password: "", confirmPassword: "" };
 
+  const onSubmit = values => {
+    console.log(values);
+  };
+
+  const formik = useFormik({ initialValues: values, validationSchema, onSubmit });
+  const change = (name, e) => {
+    console.log(`name: ${name}, value: ${e}`);
+    e.persist();
+
+    formik.handleChange(e);
+    console.log(formik.errors);
+    formik.setFieldTouched(name, true, false);
+  };
+
   return (
     <>
       <div className={classes.container}>
         <Paper elevation={1} className={classes.Paper}>
-          <h1>Form</h1>
-          <Formik
-            render={props => <Form {...props} />}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log(values);
-            }}
-            initialValues={values}
-            validationSchema={validationSchema}
-          />
+          <FormikProvider value={formik}>
+            <form onSubmit={formik.handleSubmit}>
+              <TextField
+                id="name"
+                name="name"
+                label="Name"
+                helperText={formik.touched.name ? formik.errors.name : ""}
+                onChange={e => change("name", e)}
+                value={formik.name}
+                fullWidth
+              />
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                helperText={formik.touched.email ? formik.errors.email : ""}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                onChange={e => change("email", e)}
+                value={formik.email}
+                fullWidth
+              />
+              <TextField
+                id="password"
+                name="password"
+                label="Password"
+                type="password"
+                helperText={formik.touched.password ? formik.errors.password : ""}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                onChange={e => change("password", e)}
+                value={formik.password}
+                fullWidth
+              />
+              <TextField
+                id="confirmPassword"
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                helperText={formik.touched.confirmPassword ? formik.errors.confirmPassword : ""}
+                onChange={e => change("confirmPassword", e)}
+                value={formik.confirmPassword}
+                fullWidth
+              />
+              <Button type="submit" fullWidth disabled={!formik.isValid} variant="contained" color="primary">
+                Submit
+              </Button>
+            </form>
+          </FormikProvider>
         </Paper>
       </div>
     </>
